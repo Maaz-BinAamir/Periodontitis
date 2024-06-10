@@ -3,9 +3,8 @@ from appTest import ImageApp
 
 import sys
 
-app = QApplication(sys.argv)
-
-window = ImageApp()
-
-window.show()
-app.exec()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = ImageApp()
+    window.show()
+    sys.exit(app.exec())
