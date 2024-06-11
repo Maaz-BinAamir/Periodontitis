@@ -48,6 +48,7 @@ from tensorflow.keras.optimizers import RMSprop
 model = tf.keras.models.load_model('/Users/yusrazainab/Downloads/traffic_light_model.h5')
 
 dir_path = "/Users/yusrazainab/Desktop/traffic lights"
+
 for i in os.listdir(dir_path):
     full_path = os.path.join(dir_path, i)
     if os.path.isfile(full_path):
