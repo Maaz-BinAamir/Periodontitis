@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication,QSlider
-from appTest import ImageApp
+from app.image_app import ImageApp
 
 import sys
 
