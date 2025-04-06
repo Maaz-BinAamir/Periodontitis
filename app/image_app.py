@@ -4,7 +4,6 @@ from PySide6.QtCore import Qt
 import tensorflow as tf
 import numpy as np
 from tensorflow.keras.preprocessing import image
-import sys
 
 from app.infection_window import InfectionWindow
 from app.report_window import ReportWindow
@@ -15,8 +14,7 @@ class ImageApp(QMainWindow):
         self.setWindowTitle("Periodontitis")
         self.setFixedSize(600, 700)
 
-        self.model = tf.keras.models.load_model('models/traffic_light_model.h5')
-        self.model1 = tf.keras.models.load_model('models/traffic_light_colour_model.h5')
+        self.model = tf.keras.models.load_model('models/teeth_periodontitis_classifier_Resnet50s.h5')
         
         self.picture_label = QLabel("No X-Ray Selected")
         self.picture_label.setAlignment(Qt.AlignCenter)
@@ -85,23 +83,19 @@ class ImageApp(QMainWindow):
             pixmap.scaled(self.picture_label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def display_diag(self):
-        img = image.load_img(self.file_path, target_size=(200, 200))
+        img = image.load_img(self.file_path, target_size=(224, 224))
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
-        images = np.vstack([x])
-        val = self.model.predict(images)
-        if val[0] == 0:
-            self.diag_label.setText("No Traffic Light")
+        x /= 255.0
+        val = self.model.predict(x)
+        
+        if val < 0.5:
+            self.diag_label.setText("Infection Found")
             self.infection_button.setEnabled(False) 
         else:
-            val1 = self.model1.predict(images)
-            if val1[0] == 0:
-                self.diag_label.setText("Green Traffic Light")
-                self.infection_button.setEnabled(True) 
-            else:
-                self.diag_label.setText("Red Traffic Light")
-                self.infection_button.setEnabled(True)  
-
+            self.diag_label.setText("No Infection Found")
+            self.infection_button.setEnabled(False) 
+            
     def clear_selection(self):
         self.picture_label.setText("No X-Ray Selected")
         self.picture_label.setPixmap(QPixmap())
